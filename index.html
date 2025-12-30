@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOBI HUB - Story Generator</title>
+    
+    <!-- 1. Tailwind Config for Animations -->
+    <script>
+        window.tailwind = {
+            config: {
+                theme: {
+                    extend: {
+                        fontFamily: { sans: ['Inter', 'sans-serif'] },
+                        animation: {
+                            'fade-in': 'fadeIn 0.3s ease-in',
+                            'spin-custom': 'spin 1s linear infinite',
+                        },
+                        keyframes: {
+                            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 bg-[#f3f4f6]">
+
+    <div class="min-h-screen flex flex-col lg:flex-row">
+        
+        <!-- LEFT PANEL: Controls -->
+        <div class="w-full lg:w-1/2 p-6 lg:p-12 flex flex-col gap-6 bg-white shadow-2xl z-20 overflow-y-auto h-screen">
+            
+            <!-- App Header -->
+            <div class="flex items-center gap-4 mb-4 border-b border-slate-100 pb-6">
+                <div id="app-logo-bg" class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white overflow-hidden p-2 shadow-lg transition-colors duration-300">
+                    <!-- Default App Icon -->
+                    <svg id="default-app-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+                    <!-- Custom Logo Preview (Hidden initially) -->
+                    <img id="custom-app-logo" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="hidden w-full h-full object-contain" />
+                </div>
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900">MOBI HUB</h1>
+                    <div class="flex items-center gap-2">
+                        <span id="status-dot" class="w-2 h-2 rounded-full animate-pulse bg-cyan-500"></span>
+                        <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Design Studio</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="flex flex-col gap-4">
+                <div class="flex gap-2 items-center justify-between">
+                    <button id="toggle-settings-btn" class="group flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-cyan-600 transition-colors w-fit px-4 py-2 rounded-lg hover:bg-slate-50 border border-transparent hover:border-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:rotate-90 transition-transform"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <span id="settings-text">Settings</span>
+                    </button>
+
+                    <!-- Theme Toggle -->
+                    <div class="flex bg-slate-100 p-1 rounded-lg">
+                        <button id="mode-light" class="p-2 rounded-md transition-all bg-white shadow text-cyan-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                        </button>
+                        <button id="mode-dark" class="p-2 rounded-md transition-all text-slate-400 hover:text-slate-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Color Swatches -->
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Brand Color</label>
+                    <div id="swatch-container" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+
+            <!-- Settings Panel -->
+            <div id="settings-panel" class="hidden bg-slate-50 p-6 rounded-2xl border border-slate-200 fade-in flex-col gap-5 shadow-inner mt-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Company Logo</label>
+                    <div class="flex gap-2 items-center">
+                        <input type="file" id="logo-input" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cyan-600 file:text-white hover:file:bg-cyan-700 cursor-pointer transition-colors" />
+                        <button id="reset-logo-btn" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors hidden" title="Remove saved logo">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-1">Logo is auto-saved to this browser.</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Gemini API Key</label>
+                    <input type="password" id="api-key" placeholder="Paste your API key here" class="w-full p-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none text-sm font-mono" />
+                    <p class="text-[10px] text-slate-400 mt-1">Key is stored locally on your device.</p>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="flex-1 min-h-[200px] flex flex-col gap-3 mt-4">
+                <label class="text-sm font-bold text-slate-700 flex justify-between items-end">
+                    <span>WTS List Input</span>
+                    <span class="text-slate-400 font-medium text-xs bg-slate-100 px-2 py-1 rounded">Paste raw text</span>
+                </label>
+                <textarea id="raw-input" placeholder="Paste list here...&#10;Iphone 14 Pro 128gb 850&#10;S23 Ultra 12/256 900" class="flex-1 w-full p-5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-cyan-500 outline-none resize-none font-mono text-sm leading-relaxed shadow-inner"></textarea>
+            </div>
+
+            <!-- Title & Dropdown -->
+            <div>
+                <label class="text-sm font-bold text-slate-700 mb-2 block">Story Header</label>
+                <div class="flex flex-col gap-2">
+                    <input type="text" id="story-title-input" value="🔥 WTS 🔥" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none text-sm font-bold shadow-sm" />
+                    
+                    <div class="relative">
+                        <select id="preset-dropdown" class="w-full p-3 pl-4 pr-10 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 focus:ring-2 focus:ring-slate-200 outline-none cursor-pointer appearance-none hover:bg-slate-50 transition-colors">
+                            <option value="" disabled selected>✨ Select a recommendation...</option>
+                            <option value="🔥 WTS 🔥">🔥 WTS 🔥</option>
+                            <option value="🚨 PRICE DROP 🚨">🚨 PRICE DROP 🚨</option>
+                            <option value="📦 FRESH STOCK 📦">📦 FRESH STOCK 📦</option>
+                            <option value="⚡️ FLASH DEALS ⚡️">⚡️ FLASH DEALS ⚡️</option>
+                            <option value="💎 PREMIUM STOCK 💎">💎 PREMIUM STOCK 💎</option>
+                            <option value="📉 CLEARANCE 📉">📉 CLEARANCE 📉</option>
+                        </select>
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-4 pt-2">
+                    <button id="btn-process" class="flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg bg-cyan-600 hover:bg-cyan-700 text-white shadow-cyan-200">
+                        <svg id="icon-process" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                        <span id="text-process">Generate Design</span>
+                    </button>
+                    
+                    <button id="btn-download" disabled class="px-6 py-4 rounded-xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 flex items-center gap-2 transition-all shadow-sm hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    </button>
+                </div>
+
+                <button id="btn-ai-poster" disabled class="w-full py-4 mt-2 rounded-xl font-bold text-slate-700 bg-gradient-to-r from-slate-100 to-slate-200 border border-slate-300 flex items-center justify-center gap-2 transition-all hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-600"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/></svg>
+                    <span id="text-ai-poster">Generate AI Ad Image</span>
+                </button>
+            </div>
+
+            <div id="error-box" class="hidden p-4 bg-red-50 text-red-600 text-sm rounded-xl flex items-center gap-2 border border-red-100 animate-pulse">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                <span id="error-text"></span>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: Preview -->
+        <div id="preview-panel" class="w-full lg:w-1/2 bg-slate-200 flex items-center justify-center p-8 overflow-hidden relative transition-colors duration-500">
+            <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(#000000 1px, transparent 1px); background-size: 24px 24px;"></div>
+            
+            <div class="scale-[0.85] lg:scale-100 transition-transform origin-center duration-500 ease-out hover:scale-[0.87] lg:hover:scale-[1.02]">
+                <div id="capture-target" class="relative rounded-[3rem] overflow-hidden bg-black border-[14px] border-black shadow-2xl">
+                    <!-- Notch -->
+                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-7 bg-black rounded-b-2xl z-50 pointer-events-none"></div>
+
+                    <!-- CANVAS -->
+                    <div id="canvas-content" class="w-[414px] h-[896px] relative flex flex-col overflow-hidden font-sans transition-colors duration-500 bg-white text-slate-900">
+                        
+                        <!-- BG Layers -->
+                        <div id="canvas-bg" class="absolute inset-0 bg-white"></div>
+                        <div id="blob-1" class="absolute -top-[20%] right-[-10%] w-[500px] h-[500px] rounded-full blur-[100px] bg-transparent"></div>
+                        <div id="blob-2" class="absolute -bottom-[10%] left-[-10%] w-[400px] h-[400px] rounded-full blur-[100px] bg-transparent"></div>
+                        
+                        <!-- FIX: Replaced external texture with CSS pattern to avoid CORS/createPattern errors -->
+                        <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(currentColor 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+                        <!-- Header -->
+                        <div class="pt-16 pb-6 px-8 relative z-10 flex flex-col items-center">
+                            <div id="date-badge" class="flex items-center gap-2 mb-8 backdrop-blur-md px-4 py-1.5 rounded-full border bg-slate-100/50 border-slate-200 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-600"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                <span id="date-display" class="text-[10px] font-semibold tracking-widest uppercase text-slate-600">DATE</span>
+                            </div>
+
+                            <div id="logo-area" class="h-24 w-64 mb-6 flex items-center justify-center">
+                                <h1 class="text-5xl font-extrabold tracking-tight drop-shadow-sm text-slate-900">MOBI HUB</h1>
+                            </div>
+                            
+                            <div class="w-full flex items-center gap-4 opacity-70">
+                                <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent to-slate-300"></div>
+                                <p class="text-[10px] uppercase tracking-[0.25em] font-bold text-slate-500">Official Stock List</p>
+                                <div class="h-[1px] flex-1 bg-gradient-to-l from-transparent to-slate-300"></div>
+                            </div>
+                        </div>
+
+                        <!-- Title -->
+                        <div class="px-6 py-2 relative z-10 text-center">
+                            <h2 id="preview-title" class="text-2xl font-bold tracking-tight mb-2 inline-block relative z-10 text-slate-800">🔥 WTS 🔥</h2>
+                            <div id="title-bar" class="h-1 w-12 bg-cyan-600 rounded-full mx-auto opacity-80"></div>
+                        </div>
+
+                        <!-- List -->
+                        <div id="list-wrapper" class="flex-1 px-5 py-4 relative z-10 overflow-hidden flex flex-col">
+                            <!-- Empty State -->
+                            <div class="flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-2xl mx-4 text-slate-300 border-slate-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-4 opacity-40"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                                <p class="text-xs font-semibold tracking-wider opacity-60 uppercase">List Empty</p>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="p-6 pt-0 mt-auto relative z-10">
+                            <!-- Footer Container: Bg White in Light Mode -->
+                            <div id="footer-box" class="backdrop-blur-xl rounded-2xl p-4 border text-center transition-all duration-300 bg-white border-slate-100 shadow-xl">
+                                
+                                <div id="footer-btn" class="flex justify-center items-center gap-2 mb-4 py-2.5 rounded-xl border transition-colors bg-cyan-600 border-transparent shadow-md">
+                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                                     <span class="text-xs font-black tracking-wider uppercase text-white">DM TO ORDER NOW</span>
+                                </div>
+
+                                <div id="footer-trust" class="flex justify-center gap-5 mb-3 opacity-90 text-cyan-700">
+                                    <div class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16.5 9.4-9-5.19"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg><span class="text-[9px] font-bold uppercase">Express</span></div>
+                                    <div class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span class="text-[9px] font-bold uppercase">Verified</span></div>
+                                    <div class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span class="text-[9px] font-bold uppercase">Top Rated</span></div>
+                                </div>
+                                
+                                <div id="footer-loc" class="border-t pt-3 flex items-center justify-center gap-2 border-slate-100 text-slate-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-600"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    <span class="text-[9px] font-bold tracking-widest uppercase">Germany 🇩🇪  •  Netherlands 🇳🇱</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI MODAL -->
+    <div id="ai-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl overflow-hidden max-w-lg w-full shadow-2xl relative transform scale-95 transition-transform duration-300">
+            <button id="close-modal" class="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg>
+            </button>
+            <div class="relative aspect-square w-full bg-slate-100 flex items-center justify-center">
+                <img id="ai-result-img" class="w-full h-full object-cover hidden" />
+                <div id="ai-loading-spinner" class="hidden animate-spin-custom w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full"></div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-black text-slate-900 mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-600"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/></svg>
+                    AI Generated Poster
+                </h3>
+                <p class="text-sm text-slate-500 mb-6">Generated by Gemini Imagen 4.0</p>
+                <button id="download-ai-btn" class="w-full py-3 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-colors bg-cyan-600 hover:bg-cyan-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    Download Image
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP LOGIC -->
+    <script>
+        // --- CONFIG & STATE ---
+        const COLORS = [
+            { id: 'mobi', name: 'Mobi Brand', bg: 'bg-cyan-600', text: 'text-cyan-700', base: 'cyan' },
+            { id: 'slate', name: 'Clean Slate', bg: 'bg-slate-800', text: 'text-slate-800', base: 'slate' },
+            { id: 'violet', name: 'Ultra Violet', bg: 'bg-violet-600', text: 'text-violet-600', base: 'violet' },
+            { id: 'blue', name: 'Royal Blue', bg: 'bg-blue-600', text: 'text-blue-600', base: 'blue' },
+            { id: 'rose', name: 'Neon Rose', bg: 'bg-rose-600', text: 'text-rose-600', base: 'rose' },
+            { id: 'amber', name: 'Sunset Orange', bg: 'bg-amber-600', text: 'text-amber-600', base: 'amber' },
+            { id: 'emerald', name: 'Eco Green', bg: 'bg-emerald-600', text: 'text-emerald-600', base: 'emerald' },
+        ];
+
+        let state = {
+            darkMode: false,
+            colorId: 'mobi',
+            listData: [],
+            aiImage: null
+        };
+
+        // --- DOM REFS ---
+        const $ = (id) => document.getElementById(id);
+        
+        // --- INIT ---
+        window.onload = () => {
+            // Listeners - Safe binding FIRST to ensure they are attached even if UI renders fail
+            const safeBind = (id, fn) => {
+                const el = $(id);
+                if(el) el.onclick = fn;
+            };
+
+            safeBind('toggle-settings-btn', () => $('settings-panel').classList.toggle('hidden'));
+            safeBind('mode-light', () => setThemeMode(false));
+            safeBind('mode-dark', () => setThemeMode(true));
+            
+            if($('story-title-input')) $('story-title-input').oninput = (e) => $('preview-title').innerText = e.target.value;
+            if($('preset-dropdown')) $('preset-dropdown').onchange = (e) => {
+                $('story-title-input').value = e.target.value;
+                $('preview-title').innerText = e.target.value;
+            };
+            
+            // Auto-save Key on Input
+            if($('api-key')) {
+                $('api-key').oninput = (e) => localStorage.setItem('gemini_api_key', e.target.value);
+            }
+
+            if($('logo-input')) $('logo-input').onchange = handleLogo;
+            
+            // Reset Logo Button
+            safeBind('reset-logo-btn', () => {
+                localStorage.removeItem('custom_logo');
+                if($('logo-input')) $('logo-input').value = '';
+                if($('logo-area')) $('logo-area').innerHTML = `<h1 class="text-5xl font-extrabold tracking-tight drop-shadow-sm text-slate-900">MOBI HUB</h1>`;
+                if($('default-app-icon')) $('default-app-icon').classList.remove('hidden');
+                if($('custom-app-logo')) $('custom-app-logo').classList.add('hidden');
+                if($('reset-logo-btn')) $('reset-logo-btn').classList.add('hidden');
+            });
+            
+            safeBind('btn-process', processList);
+            safeBind('btn-download', downloadCanvas);
+            safeBind('btn-ai-poster', generateAi);
+            safeBind('close-modal', closeModal);
+            safeBind('download-ai-btn', downloadAi);
+
+            // UI Init - Wrapped in try/catch to prevent crashes stopping execution
+            try {
+                renderSwatches();
+                updateTheme();
+                updateDate();
+                loadStoredSettings(); // Load persisted data
+            } catch(e) {
+                console.error("UI Init failed:", e);
+                showError("Visual init failed, but functionality should work.");
+            }
+        };
+
+        // --- CORE FUNCTIONS ---
+
+        function loadStoredSettings() {
+            // Load API Key
+            const storedKey = localStorage.getItem('gemini_api_key');
+            if(storedKey && $('api-key')) $('api-key').value = storedKey;
+
+            // Load Logo
+            const storedLogo = localStorage.getItem('custom_logo');
+            if(storedLogo) applyLogo(storedLogo);
+        }
+
+        function renderSwatches() {
+            const container = $('swatch-container');
+            if(!container) return;
+            container.innerHTML = COLORS.map(c => `
+                <button onclick="setBrandColor('${c.id}')" 
+                    class="w-8 h-8 rounded-full ${c.bg} border-2 border-white shadow-sm hover:scale-110 transition-transform" 
+                    title="${c.name}"></button>
+            `).join('');
+        }
+
+        function setBrandColor(id) {
+            state.colorId = id;
+            updateTheme();
+        }
+
+        function setThemeMode(isDark) {
+            state.darkMode = isDark;
+            updateTheme();
+        }
+
+        function updateDate() {
+            const d = new Date();
+            const str = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            if($('date-display')) $('date-display').innerText = str;
+        }
+
+        function handleLogo(e) {
+            const file = e.target.files[0];
+            if(file) {
+                // 1. Check file size (limit to 2MB for localStorage)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("Image is too large to save (Max 2MB). It will be used for this session only.");
+                    const url = URL.createObjectURL(file);
+                    applyLogo(url);
+                    return;
+                }
+
+                // 2. Read as base64 for persistence
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const base64 = evt.target.result;
+                    try {
+                        localStorage.setItem('custom_logo', base64);
+                    } catch (err) {
+                        console.error("Storage full or error:", err);
+                        alert("Could not save logo to local storage.");
+                    }
+                    applyLogo(base64);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function applyLogo(url) {
+            // Canvas Logo
+            if($('logo-area')) $('logo-area').innerHTML = `<img src="${url}" class="max-h-full max-w-full object-contain">`;
+            // App Icon
+            if($('default-app-icon')) $('default-app-icon').classList.add('hidden');
+            if($('custom-app-logo')) {
+                $('custom-app-logo').src = url;
+                $('custom-app-logo').classList.remove('hidden');
+            }
+            // Show reset button
+            if($('reset-logo-btn')) $('reset-logo-btn').classList.remove('hidden');
+        }
+
+        // --- THEME ENGINE (Vanilla) ---
+        function updateTheme() {
+            const isDark = state.darkMode;
+            const theme = COLORS.find(c => c.id === state.colorId) || COLORS[0];
+            const base = theme.base;
+
+            // Safe Update Helper
+            const safeClass = (id, cls) => { const el = $(id); if(el) el.className = cls; }
+
+            // Update Toggle Buttons
+            safeClass('mode-light', `p-2 rounded-md transition-all ${!isDark ? `bg-white shadow text-${base}-600` : 'text-slate-400 hover:text-slate-600'}`);
+            safeClass('mode-dark', `p-2 rounded-md transition-all ${isDark ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'}`);
+
+            // Update UI Accents
+            safeClass('app-logo-bg', `w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white overflow-hidden p-2 shadow-lg shadow-${base}-200`);
+            safeClass('status-dot', `w-2 h-2 rounded-full animate-pulse bg-${base}-500`);
+            safeClass('btn-process', `flex-1 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg bg-${base}-600 hover:bg-${base}-700 text-white shadow-${base}-200`);
+            safeClass('btn-download', `px-6 py-4 rounded-xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 flex items-center gap-2 transition-all shadow-sm hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed hover:text-${base}-600`);
+
+            // PREVIEW PANE COLORS
+            safeClass('preview-panel', `w-full lg:w-1/2 flex items-center justify-center p-8 overflow-hidden relative transition-colors duration-500 ${isDark ? 'bg-slate-900' : 'bg-slate-200'}`);
+            if($('preview-panel')) $('preview-panel').firstElementChild.style.backgroundImage = `radial-gradient(${isDark ? '#ffffff' : '#000000'} 1px, transparent 1px)`;
+
+            // CANVAS COLORS
+            safeClass('canvas-content', `w-[414px] h-[896px] relative flex flex-col overflow-hidden font-sans transition-colors duration-500 ${isDark ? 'bg-[#1e293b] text-white' : 'bg-white text-slate-900'}`);
+            
+            // Background
+            safeClass('canvas-bg', `absolute inset-0 ${isDark ? 'bg-gradient-to-b from-slate-800 to-[#0f172a]' : 'bg-white'}`);
+            const blobClass = isDark ? `bg-${base}-600/20` : 'bg-transparent'; 
+            safeClass('blob-1', `absolute -top-[20%] right-[-10%] w-[500px] h-[500px] rounded-full blur-[100px] ${blobClass}`);
+            safeClass('blob-2', `absolute -bottom-[10%] left-[-10%] w-[400px] h-[400px] rounded-full blur-[100px] ${blobClass}`);
+
+            // Header Elements
+            safeClass('date-badge', `flex items-center gap-2 mb-8 backdrop-blur-md px-4 py-1.5 rounded-full border ${isDark ? 'bg-white/10 border-white/5' : 'bg-slate-100/50 border-slate-200 shadow-sm'}`);
+            if($('date-badge')) $('date-badge').firstElementChild.setAttribute('class', `text-${base}-600`); 
+            safeClass('date-display', `text-[10px] font-semibold tracking-widest uppercase ${isDark ? `text-${base}-200` : 'text-slate-600'}`);
+            
+            // Title
+            safeClass('preview-title', `text-2xl font-bold tracking-tight mb-2 inline-block relative z-10 ${isDark ? 'text-white' : 'text-slate-800'}`);
+            safeClass('title-bar', `h-1 w-12 bg-${base}-600 rounded-full mx-auto opacity-80`);
+
+            // Footer
+            safeClass('footer-box', `backdrop-blur-xl rounded-2xl p-4 border text-center transition-all duration-300 ${isDark ? 'bg-slate-900/90 border-white/10 shadow-black/50' : 'bg-white border-slate-100 shadow-xl'}`);
+            safeClass('footer-btn', `flex justify-center items-center gap-2 mb-4 py-2.5 rounded-xl border transition-colors bg-${base}-600 border-transparent shadow-md`);
+            safeClass('footer-trust', `flex justify-center gap-5 mb-3 opacity-90 ${isDark ? 'text-slate-300' : `text-${base}-700`}`);
+            safeClass('footer-loc', `border-t pt-3 flex items-center justify-center gap-2 ${isDark ? 'border-white/10 text-slate-400' : 'border-slate-100 text-slate-500'}`);
+            if($('footer-loc')) $('footer-loc').firstElementChild.setAttribute('class', isDark ? '' : `text-${base}-600`);
+
+            if(state.listData.length > 0) renderListItems();
+        }
+
+        // --- LOGIC ---
+        async function processList() {
+            const key = $('api-key').value;
+            const text = $('raw-input').value;
+            
+            if(!key) return alert('Please enter API Key in settings');
+            if(!text) return alert('Please paste a list');
+
+            const btn = $('btn-process');
+            btn.innerHTML = `<svg class="animate-spin-custom h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text }] }],
+                        systemInstruction: { parts: [{ text: `Extract WTS list. Input: "iPhone 13 128GB A Grade 550". Output JSON: [{"model":"iPhone 13","spec":"128GB","grade":"A Grade","price":"€550"}]. Rules: Capitalize nicely. Ensure currency.` }] },
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                });
+                
+                const data = await response.json();
+                if(data.error) throw new Error(data.error.message);
+                
+                let cleanText = data.candidates[0].content.parts[0].text;
+                cleanText = cleanText.replace(/```json|```/g, '').trim();
+
+                state.listData = JSON.parse(cleanText);
+                renderListItems();
+                
+                $('btn-download').disabled = false;
+                $('btn-ai-poster').disabled = false;
+                // Safe fix for AI button recoloring
+                if($('btn-ai-poster') && $('btn-ai-poster').firstElementChild) {
+                    $('btn-ai-poster').firstElementChild.setAttribute('class', `text-${getThemeBase()}-600`);
+                }
+
+            } catch (e) {
+                showError(e.message);
+            } finally {
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg> Generate Design`;
+                btn.disabled = false;
+            }
+        }
+
+        function renderListItems() {
+            const listEl = $('list-wrapper');
+            if(!listEl) return;
+            listEl.innerHTML = '<div class="flex flex-col gap-3"></div>';
+            const container = listEl.firstElementChild;
+            const isDark = state.darkMode;
+            const base = getThemeBase();
+
+            state.listData.forEach((item, idx) => {
+                let gradeClass = 'bg-slate-500 text-white';
+                const g = item.grade ? item.grade.toLowerCase() : '';
+                if(g.includes('new')) gradeClass = 'bg-emerald-500 text-white';
+                else if(g.includes('a')) gradeClass = 'bg-indigo-500 text-white';
+                
+                const cardBg = isDark ? 'bg-white/5 border-white/10' : 'bg-white border-slate-100 shadow-sm';
+                const textCol = isDark ? 'text-white' : 'text-slate-900';
+                const specCol = isDark ? `text-${base}-200` : `text-${base}-600`;
+
+                const html = `
+                    <div class="relative group fade-in" style="animation-delay: ${idx * 50}ms">
+                        <div class="relative backdrop-blur-md p-3.5 rounded-xl border flex items-center justify-between overflow-hidden ${cardBg}">
+                            <div class="pl-2 flex items-center justify-between relative z-10 w-full">
+                                <div class="flex items-baseline gap-2.5">
+                                    <span class="font-bold text-[14px] tracking-tight ${textCol}">${item.model || 'Unknown Model'}</span>
+                                    <span class="text-lg font-black italic tracking-tighter ${specCol}">${item.spec || ''}</span>
+                                </div>
+                                <span class="text-[10px] font-bold px-2 py-1 rounded ml-2 whitespace-nowrap shadow-sm ${gradeClass}">${item.grade ? item.grade.toUpperCase() : 'USED'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        async function downloadCanvas() {
+            const target = $('capture-target');
+            if (!target) return showError("Capture target not found.");
+
+            // Visual feedback
+            const btn = $('btn-download');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="text-sm font-bold">Saving...</span>';
+            btn.disabled = true;
+
+            try {
+                // Wait a moment for any styles/images to settle
+                await new Promise(resolve => setTimeout(resolve, 200));
+
+                const canvas = await html2canvas(target, { 
+                    scale: 2, 
+                    useCORS: true, 
+                    logging: true, 
+                    backgroundColor: null,
+                    allowTaint: false, // Must be false to allow downloading
+                    ignoreElements: (element) => {
+                        // Ignore hidden images with no src to prevent errors
+                        if (element.tagName === 'IMG' && (!element.src || element.src === window.location.href)) return true;
+                        return false;
+                    }
+                });
+
+                const link = document.createElement('a');
+                link.download = `MobiHub-Story-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+            } catch(e) {
+                console.error("Download Error:", e);
+                showError("Download failed: " + (e.message || "Unknown error"));
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function generateAi() {
+            const btn = $('btn-ai-poster');
+            btn.disabled = true;
+            btn.innerHTML = 'Generating...';
+            
+            try {
+                const key = $('api-key').value;
+                const prompt = `Professional product photo of ${state.listData[0] ? state.listData[0].model : 'smartphone'}, cinematic lighting, modern ${state.darkMode ? 'dark' : 'white'} studio, premium 8k.`;
+                
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${key}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ instances: [{ prompt }], parameters: { sampleCount: 1 } })
+                });
+                
+                const data = await res.json();
+                if(data.error) throw new Error(data.error.message);
+                
+                const b64 = data.predictions[0].bytesBase64Encoded;
+                $('ai-result-img').src = `data:image/png;base64,${b64}`;
+                $('ai-result-img').classList.remove('hidden');
+                
+                $('ai-modal').classList.remove('hidden');
+                setTimeout(() => $('ai-modal').classList.remove('opacity-0'), 10);
+                
+            } catch(e) {
+                showError(e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Generate AI Ad Image';
+            }
+        }
+
+        function downloadAi() {
+            const src = $('ai-result-img').src;
+            if(!src) return;
+            const link = document.createElement('a');
+            link.download = 'AI-Ad.png';
+            link.href = src;
+            link.click();
+        }
+
+        function closeModal() {
+            $('ai-modal').classList.add('opacity-0');
+            setTimeout(() => $('ai-modal').classList.add('hidden'), 300);
+        }
+
+        function showError(msg) {
+            $('error-text').innerText = msg;
+            $('error-box').classList.remove('hidden');
+            setTimeout(() => $('error-box').classList.add('hidden'), 5000);
+        }
+
+        function getThemeBase() {
+            const theme = COLORS.find(c => c.id === state.colorId) || COLORS[0];
+            return theme.base;
+        }
+
+    </script>
+</body>
+</html>
