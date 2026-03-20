@@ -660,13 +660,13 @@
                     const isNewGroup = currentModel !== item.model && currentModel !== '';
                     currentModel = item.model;
                     return `
-                    <div class="${isNewGroup ? 'mt-4' : 'mt-1.5'} flex flex-wrap items-center justify-center gap-2 text-center w-full animate-pop-in px-2">
-                        <div class="marker-highlight px-3.5 py-1 rounded-[10px] font-black text-[22px] tracking-tight truncate">${item.model} ${item.storage}</div>
+                    <div class="${isNewGroup ? 'mt-4' : 'mt-1.5'} flex flex-nowrap items-center justify-center gap-2 text-center w-full animate-pop-in px-1 overflow-hidden">
+                        <div class="marker-highlight px-2.5 py-0.5 rounded-[8px] font-black text-[20px] tracking-tighter shrink-0 whitespace-nowrap">${item.model} ${item.storage}</div>
                         ${(item.grade || item.spec) ? `
-                        <div class="text-[22px] font-extrabold text-gray-800 dark:text-gray-100 flex items-center justify-center gap-1.5">
+                        <div class="text-[20px] font-black text-gray-800 dark:text-gray-100 flex items-center justify-center gap-1.5 shrink-0 whitespace-nowrap">
                             ${item.grade ? `<span class="text-brand">${item.grade}</span>` : ''}
-                            ${(item.grade && item.spec) ? `<span class="opacity-30 mx-0.5">•</span>` : ''}
-                            ${item.spec ? `<span class="opacity-80">${item.spec}</span>` : ''}
+                            ${(item.grade && item.spec) ? `<span class="opacity-30 mx-0.5 text-[14px]">•</span>` : ''}
+                            ${item.spec ? `<span class="opacity-80 text-[14px] font-bold">${item.spec}</span>` : ''}
                         </div>` : ''}
                     </div>`;
                 }).join('');
