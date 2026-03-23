@@ -134,8 +134,7 @@
         .toast {
             background: #1e293b;
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
+            padding: 0.75rem 1.5rem;            border-radius: 9999px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             margin-bottom: 0.5rem;
             display: flex;
@@ -234,42 +233,48 @@
             <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Add Device</label>
             <div class="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div class="grid grid-cols-2 gap-3 mb-4">
+                    <!-- Model Selection -->
                     <div class="col-span-2 relative">
                         <select id="input-model" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-3 py-3 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition-all font-semibold appearance-none shadow-sm cursor-pointer hover:border-brand/50">
                             <option value="" disabled selected>Select Model...</option>
-                            <option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
-                            <option value="iPhone 16 Pro">iPhone 16 Pro</option>
-                            <option value="iPhone 16 Plus">iPhone 16 Plus</option>
-                            <option value="iPhone 16">iPhone 16</option>
-                            <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
-                            <option value="iPhone 15 Pro">iPhone 15 Pro</option>
-                            <option value="iPhone 15 Plus">iPhone 15 Plus</option>
-                            <option value="iPhone 15">iPhone 15</option>
-                            <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
-                            <option value="iPhone 14 Pro">iPhone 14 Pro</option>
-                            <option value="iPhone 14 Plus">iPhone 14 Plus</option>
-                            <option value="iPhone 14">iPhone 14</option>
-                            <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
-                            <option value="iPhone 13 Pro">iPhone 13 Pro</option>
-                            <option value="iPhone 13">iPhone 13</option>
-                            <option value="iPhone 13 mini">iPhone 13 mini</option>
-                            <option value="iPhone 12 Pro Max">iPhone 12 Pro Max</option>
-                            <option value="iPhone 12 Pro">iPhone 12 Pro</option>
-                            <option value="iPhone 12">iPhone 12</option>
-                            <option value="iPhone 12 mini">iPhone 12 mini</option>
-                            <option value="iPhone 11 Pro Max">iPhone 11 Pro Max</option>
-                            <option value="iPhone 11 Pro">iPhone 11 Pro</option>
-                            <option value="iPhone 11">iPhone 11</option>
-                            <option value="iPhone XS Max">iPhone XS Max</option>
-                            <option value="iPhone XS">iPhone XS</option>
-                            <option value="iPhone XR">iPhone XR</option>
-                            <option value="iPhone X">iPhone X</option>
-                            <option value="iPhone SE (3rd Gen)">iPhone SE (3rd Gen)</option>
-                            <option value="iPhone SE (2nd Gen)">iPhone SE (2nd Gen)</option>
+                            <optgroup label="iPhone 17 Series">
+                                <option value="iPhone 17 Pro Max">iPhone 17 Pro Max</option>
+                                <option value="iPhone 17 Pro">iPhone 17 Pro</option>
+                                <option value="iPhone 17 Plus">iPhone 17 Plus</option>
+                                <option value="iPhone 17">iPhone 17</option>
+                            </optgroup>
+                            <optgroup label="Previous Series">
+                                <option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
+                                <option value="iPhone 16 Pro">iPhone 16 Pro</option>
+                                <option value="iPhone 16 Plus">iPhone 16 Plus</option>
+                                <option value="iPhone 16">iPhone 16</option>
+                                <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+                                <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+                                <option value="iPhone 15 Plus">iPhone 15 Plus</option>
+                                <option value="iPhone 15">iPhone 15</option>
+                                <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
+                                <option value="iPhone 14 Pro">iPhone 14 Pro</option>
+                                <option value="iPhone 14 Plus">iPhone 14 Plus</option>
+                                <option value="iPhone 14">iPhone 14</option>
+                                <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
+                                <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+                                <option value="iPhone 13">iPhone 13</option>
+                                <option value="iPhone 13 mini">iPhone 13 mini</option>
+                                <option value="iPhone 12 Pro Max">iPhone 12 Pro Max</option>
+                                <option value="iPhone 12 Pro">iPhone 12 Pro</option>
+                                <option value="iPhone 12">iPhone 12</option>
+                                <option value="iPhone 12 mini">iPhone 12 mini</option>
+                                <option value="iPhone 11 Pro Max">iPhone 11 Pro Max</option>
+                                <option value="iPhone 11 Pro">iPhone 11 Pro</option>
+                                <option value="iPhone 11">iPhone 11</option>
+                            </optgroup>
+                            <option value="CUSTOM">➕ Other / Custom Model...</option>
                         </select>
                         <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                        <input type="text" id="input-model-custom" class="hidden w-full mt-2 bg-white dark:bg-gray-800 border-2 border-brand/30 text-gray-900 dark:text-white rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-brand outline-none transition-all font-semibold" placeholder="Type custom model name...">
                     </div>
 
+                    <!-- Storage Selection -->
                     <div class="relative">
                         <select id="input-storage" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-3 py-3 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition-all font-semibold appearance-none shadow-sm cursor-pointer hover:border-brand/50">
                             <option value="" disabled selected>Storage...</option>
@@ -278,10 +283,13 @@
                             <option value="256GB">256GB</option>
                             <option value="512GB">512GB</option>
                             <option value="1TB">1TB</option>
+                            <option value="CUSTOM">Custom...</option>
                         </select>
                         <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                        <input type="text" id="input-storage-custom" class="hidden w-full mt-2 bg-white dark:bg-gray-800 border-2 border-brand/30 text-gray-900 dark:text-white rounded-xl px-2 py-2 text-xs focus:ring-2 focus:ring-brand outline-none" placeholder="e.g. 2TB">
                     </div>
 
+                    <!-- Spec Selection -->
                     <div class="relative">
                         <select id="input-spec" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-3 py-3 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition-all font-semibold appearance-none shadow-sm cursor-pointer hover:border-brand/50">
                             <option value="" disabled selected>Spec...</option>
@@ -291,10 +299,13 @@
                             <option value="ASIAN">ASIAN</option>
                             <option value="INDIAN">INDIAN</option>
                             <option value="HK">HK</option>
+                            <option value="CUSTOM">Custom...</option>
                         </select>
                         <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                        <input type="text" id="input-spec-custom" class="hidden w-full mt-2 bg-white dark:bg-gray-800 border-2 border-brand/30 text-gray-900 dark:text-white rounded-xl px-2 py-2 text-xs focus:ring-2 focus:ring-brand outline-none" placeholder="e.g. US">
                     </div>
 
+                    <!-- Grade Selection -->
                     <div class="col-span-2 relative">
                         <select id="input-grade" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-3 py-3 text-sm focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition-all font-semibold appearance-none shadow-sm cursor-pointer hover:border-brand/50">
                             <option value="" disabled selected>Select Grade...</option>
@@ -308,8 +319,10 @@
                             <option value="AB">AB</option>
                             <option value="ABC">ABC</option>
                             <option value="BC">BC</option>
+                            <option value="CUSTOM">Custom...</option>
                         </select>
                         <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                        <input type="text" id="input-grade-custom" class="hidden w-full mt-2 bg-white dark:bg-gray-800 border-2 border-brand/30 text-gray-900 dark:text-white rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-brand outline-none" placeholder="Type custom grade...">
                     </div>
                 </div>
                 <button id="btn-add-item" class="w-full bg-brand hover:brightness-110 text-white font-black tracking-wide py-3.5 rounded-xl transition-all flex justify-center items-center gap-2 transform active:scale-[0.97] shadow-lg shadow-brand/30">
@@ -457,10 +470,17 @@
             const storyHeaderSelect = document.getElementById('story-header');
             const canvasTitle = document.getElementById('canvas-title');
             const canvasDate = document.getElementById('canvas-date');
+            
+            // Inputs
             const inputModel = document.getElementById('input-model');
+            const inputModelCustom = document.getElementById('input-model-custom');
             const inputStorage = document.getElementById('input-storage');
+            const inputStorageCustom = document.getElementById('input-storage-custom');
             const inputSpec = document.getElementById('input-spec');
+            const inputSpecCustom = document.getElementById('input-spec-custom');
             const inputGrade = document.getElementById('input-grade');
+            const inputGradeCustom = document.getElementById('input-grade-custom');
+            
             const btnAddItem = document.getElementById('btn-add-item');
             const controlsList = document.getElementById('controls-list');
             const controlsEmptyState = document.getElementById('controls-empty-state');
@@ -565,6 +585,23 @@
                 }, 200);
             });
 
+            // Handle "Custom" toggles
+            const setupCustomToggle = (selectEl, customInputEl) => {
+                selectEl.addEventListener('change', () => {
+                    if (selectEl.value === 'CUSTOM') {
+                        customInputEl.classList.remove('hidden');
+                        customInputEl.focus();
+                    } else {
+                        customInputEl.classList.add('hidden');
+                    }
+                });
+            };
+
+            setupCustomToggle(inputModel, inputModelCustom);
+            setupCustomToggle(inputStorage, inputStorageCustom);
+            setupCustomToggle(inputSpec, inputSpecCustom);
+            setupCustomToggle(inputGrade, inputGradeCustom);
+
             logoUpload.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -586,26 +623,43 @@
             }
 
             btnAddItem.addEventListener('click', () => {
-                const model = inputModel.value;
+                let model = inputModel.value === 'CUSTOM' ? inputModelCustom.value.trim() : inputModel.value;
+                let storage = inputStorage.value === 'CUSTOM' ? inputStorageCustom.value.trim() : inputStorage.value;
+                let spec = inputSpec.value === 'CUSTOM' ? inputSpecCustom.value.trim() : inputSpec.value;
+                let grade = inputGrade.value === 'CUSTOM' ? inputGradeCustom.value.trim() : inputGrade.value;
+
                 if (!model) {
                     inputModel.classList.add('animate-shake', 'border-red-500');
                     setTimeout(() => inputModel.classList.remove('animate-shake', 'border-red-500'), 400);
-                    showToast("Please select a model.", true);
+                    showToast("Please enter a model name.", true);
                     return;
                 }
+
                 const newItem = {
                     id: Date.now().toString(),
                     model: model,
-                    storage: inputStorage.value || '',
-                    spec: inputSpec.value || '',
-                    grade: inputGrade.value || '',
-                    modelIndex: inputModel.selectedIndex
+                    storage: storage || '',
+                    spec: spec || '',
+                    grade: grade || '',
+                    modelIndex: inputModel.value === 'CUSTOM' ? 999 : inputModel.selectedIndex
                 };
+
                 currentInventory.push(newItem);
                 listCount.classList.add('animate-badge-pulse');
                 setTimeout(() => listCount.classList.remove('animate-badge-pulse'), 300);
+                
                 updateUIAndCanvas();
-                inputStorage.value = ''; inputSpec.value = ''; inputGrade.value = '';
+                
+                // Partial reset
+                if (inputModel.value !== 'CUSTOM') {
+                    inputStorage.value = ''; inputSpec.value = ''; inputGrade.value = '';
+                    inputStorageCustom.classList.add('hidden'); inputSpecCustom.classList.add('hidden'); inputGradeCustom.classList.add('hidden');
+                } else {
+                    // Full reset if custom was used
+                    inputModel.value = ''; inputModelCustom.value = ''; inputModelCustom.classList.add('hidden');
+                    inputStorage.value = ''; inputSpec.value = ''; inputGrade.value = '';
+                    inputStorageCustom.classList.add('hidden'); inputSpecCustom.classList.add('hidden'); inputGradeCustom.classList.add('hidden');
+                }
             });
 
             window.removeInventoryItem = function(id) {
